@@ -1,5 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
+<<<<<<< HEAD
 @@ -5,19 +5,13 @@
  import io.netty.buffer.Unpooled;
  import io.netty.util.concurrent.Future;
@@ -12,10 +13,17 @@
 -import java.util.Iterator;
 -import java.util.Random;
 -import java.util.concurrent.Callable;
+=======
+@@ -13,6 +13,7 @@
+ import java.util.Iterator;
+ import java.util.Random;
+ import java.util.concurrent.Callable;
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
 +import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
  import net.minecraft.command.server.CommandBlockLogic;
  import net.minecraft.crash.CrashReport;
+<<<<<<< HEAD
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.Entity;
 +import net.minecraft.entity.EntityLiving;
@@ -34,10 +42,17 @@
 -import net.minecraft.inventory.ContainerRepair;
 -import net.minecraft.inventory.Slot;
 +import net.minecraft.inventory.*;
+=======
+@@ -32,6 +33,7 @@
+ import net.minecraft.inventory.ContainerMerchant;
+ import net.minecraft.inventory.ContainerRepair;
+ import net.minecraft.inventory.Slot;
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
 +import net.minecraft.item.Item;
  import net.minecraft.item.ItemEditableBook;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.ItemWritableBook;
+<<<<<<< HEAD
  import net.minecraft.nbt.NBTTagString;
  import net.minecraft.network.play.INetHandlerPlayServer;
 -import net.minecraft.network.play.client.C00PacketKeepAlive;
@@ -87,6 +102,20 @@
 -import net.minecraft.util.IntHashMap;
 -import net.minecraft.util.ReportedException;
 +import net.minecraft.util.*;
+=======
+@@ -61,6 +63,7 @@
+ import net.minecraft.network.play.server.S00PacketKeepAlive;
+ import net.minecraft.network.play.server.S02PacketChat;
+ import net.minecraft.network.play.server.S08PacketPlayerPosLook;
++import net.minecraft.network.play.server.S1CPacketEntityMetadata;
+ import net.minecraft.network.play.server.S23PacketBlockChange;
+ import net.minecraft.network.play.server.S2FPacketSetSlot;
+ import net.minecraft.network.play.server.S32PacketConfirmTransaction;
+@@ -81,19 +84,75 @@
+ import net.minecraft.util.IChatComponent;
+ import net.minecraft.util.IntHashMap;
+ import net.minecraft.util.ReportedException;
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
 +import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
 +import net.minecraftforge.cauldron.CauldronUtils;
@@ -96,8 +125,37 @@
  import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
+<<<<<<< HEAD
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.CraftServer;
+=======
+ 
++import net.minecraftforge.cauldron.CauldronUtils;
+ import net.minecraftforge.common.ForgeHooks;
+ import net.minecraftforge.common.MinecraftForge;
+-import cpw.mods.fml.common.eventhandler.Event;
+ import net.minecraftforge.event.ForgeEventFactory;
+ import net.minecraftforge.event.ServerChatEvent;
+ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+ 
++// CraftBukkit start
++import java.io.UnsupportedEncodingException;
++import java.util.concurrent.ExecutionException;
++import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
++import java.util.HashSet;
++
++import net.minecraft.entity.EntityLiving;
++import net.minecraft.init.Blocks;
++import net.minecraft.network.play.server.S05PacketSpawnPosition;
++import net.minecraft.network.play.server.S09PacketHeldItemChange;
++import net.minecraft.network.play.server.S1BPacketEntityAttach;
++import net.minecraft.network.play.server.S33PacketUpdateSign;
++import net.minecraft.util.MathHelper;
++import net.minecraft.util.MovingObjectPosition;
++import net.minecraft.util.Vec3;
++
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
 +import org.bukkit.craftbukkit.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
@@ -139,7 +197,11 @@
  public class NetHandlerPlayServer implements INetHandlerPlayServer
  {
      private static final Logger logger = LogManager.getLogger();
+<<<<<<< HEAD
 @@ -107,13 +94,12 @@
+=======
+@@ -107,13 +166,12 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
      private long field_147379_i;
      private static Random field_147376_j = new Random();
      private long field_147377_k;
@@ -157,7 +219,11 @@
      private static final String __OBFID = "CL_00001452";
  
      public NetHandlerPlayServer(MinecraftServer p_i1530_1_, NetworkManager p_i1530_2_, EntityPlayerMP p_i1530_3_)
+<<<<<<< HEAD
 @@ -123,8 +109,41 @@
+=======
+@@ -123,8 +181,41 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
          p_i1530_2_.setNetHandler(this);
          this.playerEntity = p_i1530_3_;
          p_i1530_3_.playerNetServerHandler = this;
@@ -199,7 +265,11 @@
      public void onNetworkTick()
      {
          this.field_147366_g = false;
+<<<<<<< HEAD
 @@ -139,10 +158,16 @@
+=======
+@@ -139,10 +230,16 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
              this.sendPacket(new S00PacketKeepAlive(this.field_147378_h));
          }
  
@@ -216,7 +286,11 @@
  
          if (this.field_147375_m > 0)
          {
+<<<<<<< HEAD
 @@ -162,6 +187,24 @@
+=======
+@@ -162,6 +259,24 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
      public void kickPlayerFromServer(String p_147360_1_)
      {
@@ -241,7 +315,11 @@
          final ChatComponentText chatcomponenttext = new ChatComponentText(p_147360_1_);
          this.netManager.scheduleOutboundPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener[] {new GenericFutureListener()
          {
+<<<<<<< HEAD
 @@ -170,8 +213,8 @@
+=======
+@@ -170,8 +285,8 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
              {
                  NetHandlerPlayServer.this.netManager.closeChannel(chatcomponenttext);
              }
@@ -252,7 +330,11 @@
          this.netManager.disableAutoRead();
      }
  
+<<<<<<< HEAD
 @@ -180,8 +223,18 @@
+=======
+@@ -180,8 +295,18 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
          this.playerEntity.setEntityActionState(p_147358_1_.func_149620_c(), p_147358_1_.func_149616_d(), p_147358_1_.func_149618_e(), p_147358_1_.func_149617_f());
      }
  
@@ -271,7 +353,11 @@
          WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
          this.field_147366_g = true;
  
+<<<<<<< HEAD
 @@ -199,8 +252,75 @@
+=======
+@@ -199,8 +324,75 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                  }
              }
  
@@ -348,7 +434,11 @@
                  double d1;
                  double d2;
                  double d3;
+<<<<<<< HEAD
 @@ -280,13 +400,6 @@
+=======
+@@ -280,13 +472,6 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                      d3 = p_147347_1_.func_149472_e();
                      d4 = p_147347_1_.func_149471_f() - p_147347_1_.func_149467_d();
  
@@ -362,7 +452,11 @@
                      if (Math.abs(p_147347_1_.func_149464_c()) > 3.2E7D || Math.abs(p_147347_1_.func_149472_e()) > 3.2E7D)
                      {
                          this.kickPlayerFromServer("Illegal position");
+<<<<<<< HEAD
 @@ -315,10 +428,14 @@
+=======
+@@ -315,10 +500,14 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                  //BUGFIX: min -> max, grabs the highest distance
                  double d7 = Math.max(Math.abs(d4), Math.abs(this.playerEntity.motionX));
                  double d8 = Math.max(Math.abs(d5), Math.abs(this.playerEntity.motionY));
@@ -378,7 +472,11 @@
                  {
                      logger.warn(this.playerEntity.getCommandSenderName() + " moved too quickly! " + d4 + "," + d5 + "," + d6 + " (" + d7 + ", " + d8 + ", " + d9 + ")");
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
+<<<<<<< HEAD
 @@ -413,21 +530,85 @@
+=======
+@@ -413,21 +602,85 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
      public void setPlayerLocation(double p_147364_1_, double p_147364_3_, double p_147364_5_, float p_147364_7_, float p_147364_8_)
      {
@@ -469,7 +567,11 @@
              this.playerEntity.dropOneItem(false);
          }
          else if (p_147345_1_.func_149506_g() == 3)
+<<<<<<< HEAD
 @@ -490,7 +671,17 @@
+=======
+@@ -490,7 +743,17 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                  }
                  else
                  {
@@ -487,7 +589,11 @@
                  }
              }
              else if (p_147345_1_.func_149506_g() == 2)
+<<<<<<< HEAD
 @@ -517,6 +708,34 @@
+=======
+@@ -517,6 +780,34 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
      public void processPlayerBlockPlacement(C08PacketPlayerBlockPlacement p_147346_1_)
      {
          WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
@@ -522,7 +628,11 @@
          ItemStack itemstack = this.playerEntity.inventory.getCurrentItem();
          boolean flag = false;
          boolean placeResult = true;
+<<<<<<< HEAD
 @@ -532,12 +751,20 @@
+=======
+@@ -532,12 +823,20 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
              {
                  return;
              }
@@ -545,7 +655,11 @@
          }
          else if (p_147346_1_.func_149571_d() >= this.serverController.getBuildLimit() - 1 && (p_147346_1_.func_149568_f() == 1 || p_147346_1_.func_149571_d() >= this.serverController.getBuildLimit()))
          {
+<<<<<<< HEAD
 @@ -548,17 +775,24 @@
+=======
+@@ -548,17 +847,24 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
          }
          else
          {
@@ -578,7 +692,11 @@
              flag = true;
          }
  
+<<<<<<< HEAD
 @@ -615,7 +849,7 @@
+=======
+@@ -615,7 +921,7 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
              this.playerEntity.openContainer.detectAndSendChanges();
              this.playerEntity.isChangingQuantityOnly = false;
  
@@ -587,7 +705,11 @@
              {
                  this.sendPacket(new S2FPacketSetSlot(this.playerEntity.openContainer.windowId, slot.slotNumber, this.playerEntity.inventory.getCurrentItem()));
              }
+<<<<<<< HEAD
 @@ -624,14 +858,34 @@
+=======
+@@ -624,14 +930,34 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
      public void onDisconnect(IChatComponent p_147231_1_)
      {
@@ -627,7 +749,11 @@
          if (this.serverController.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.serverController.getServerOwner()))
          {
              logger.info("Stopping singleplayer server as player logged out");
+<<<<<<< HEAD
 @@ -657,6 +911,18 @@
+=======
+@@ -657,6 +983,18 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
              }
          }
  
@@ -646,7 +772,11 @@
          try
          {
              this.netManager.scheduleOutboundPacket(p_147359_1_, new GenericFutureListener[0]);
+<<<<<<< HEAD
 @@ -679,20 +945,37 @@
+=======
+@@ -679,20 +1017,37 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
      public void processHeldItemChange(C09PacketHeldItemChange p_147355_1_)
      {
@@ -685,7 +815,11 @@
          {
              ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("chat.cannotSend", new Object[0]);
              chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
+<<<<<<< HEAD
 @@ -708,51 +991,430 @@
+=======
+@@ -708,51 +1063,430 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
              {
                  if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
                  {
@@ -1128,7 +1262,11 @@
          if (p_147357_1_.func_149513_d() == 1)
          {
              this.playerEntity.setSneaking(true);
+<<<<<<< HEAD
 @@ -772,7 +1434,7 @@
+=======
+@@ -772,7 +1506,7 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
          else if (p_147357_1_.func_149513_d() == 3)
          {
              this.playerEntity.wakeUpPlayer(false, true, true);
@@ -1137,7 +1275,11 @@
          }
          else if (p_147357_1_.func_149513_d() == 6)
          {
+<<<<<<< HEAD
 @@ -789,8 +1451,20 @@
+=======
+@@ -789,8 +1523,20 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
      public void processUseEntity(C02PacketUseEntity p_147340_1_)
      {
@@ -1159,7 +1301,11 @@
          this.playerEntity.func_143004_u();
  
          if (entity != null)
+<<<<<<< HEAD
 @@ -805,9 +1479,53 @@
+=======
+@@ -805,9 +1551,53 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
              if (this.playerEntity.getDistanceSqToEntity(entity) < d0)
              {
@@ -1213,7 +1359,11 @@
                  }
                  else if (p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.ATTACK)
                  {
+<<<<<<< HEAD
 @@ -819,6 +1537,13 @@
+=======
+@@ -819,6 +1609,13 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                      }
  
                      this.playerEntity.attackTargetEntityWithCurrentItem(entity);
@@ -1227,7 +1377,11 @@
                  }
              }
          }
+<<<<<<< HEAD
 @@ -828,14 +1553,26 @@
+=======
+@@ -828,14 +1625,26 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
      {
          this.playerEntity.func_143004_u();
          C16PacketClientStatus.EnumState enumstate = p_147342_1_.func_149435_c();
@@ -1256,7 +1410,11 @@
                  else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
                  {
                      if (this.serverController.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.serverController.getServerOwner()))
+<<<<<<< HEAD
 @@ -857,7 +1594,7 @@
+=======
+@@ -857,7 +1666,7 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                          return;
                      }
  
@@ -1265,7 +1423,11 @@
                  }
  
                  break;
+<<<<<<< HEAD
 @@ -871,17 +1608,461 @@
+=======
+@@ -871,17 +1680,461 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
      public void processCloseWindow(C0DPacketCloseWindow p_147356_1_)
      {
@@ -1728,7 +1890,11 @@
              if (ItemStack.areItemStacksEqual(p_147351_1_.func_149546_g(), itemstack))
              {
                  this.playerEntity.playerNetServerHandler.sendPacket(new S32PacketConfirmTransaction(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
+<<<<<<< HEAD
 @@ -903,6 +2084,12 @@
+=======
+@@ -903,6 +2156,12 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                  }
  
                  this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, arraylist);
@@ -1741,7 +1907,11 @@
              }
          }
      }
+<<<<<<< HEAD
 @@ -925,9 +2112,61 @@
+=======
+@@ -925,9 +2184,61 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
              boolean flag = p_147344_1_.func_149627_c() < 0;
              ItemStack itemstack = p_147344_1_.func_149625_d();
              boolean flag1 = p_147344_1_.func_149627_c() >= 1 && p_147344_1_.func_149627_c() < 36 + InventoryPlayer.getHotbarSize();
@@ -1804,7 +1974,11 @@
              if (flag1 && flag2 && flag3)
              {
                  if (itemstack == null)
+<<<<<<< HEAD
 @@ -956,6 +2195,11 @@
+=======
+@@ -956,6 +2267,11 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
      public void processConfirmTransaction(C0FPacketConfirmTransaction p_147339_1_)
      {
@@ -1816,7 +1990,11 @@
          Short oshort = (Short)this.field_147372_n.lookup(this.playerEntity.openContainer.windowId);
  
          if (oshort != null && p_147339_1_.func_149533_d() == oshort.shortValue() && this.playerEntity.openContainer.windowId == p_147339_1_.func_149532_c() && !this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
+<<<<<<< HEAD
 @@ -966,6 +2210,11 @@
+=======
+@@ -966,6 +2282,11 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
      public void processUpdateSign(C12PacketUpdateSign p_147343_1_)
      {
@@ -1828,7 +2006,11 @@
          this.playerEntity.func_143004_u();
          WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
  
+<<<<<<< HEAD
 @@ -980,6 +2229,7 @@
+=======
+@@ -980,6 +2301,7 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                  if (!tileentitysign.func_145914_a() || tileentitysign.func_145911_b() != this.playerEntity)
                  {
                      this.serverController.logWarning("Player " + this.playerEntity.getCommandSenderName() + " just tried to change non-editable sign");
@@ -1836,7 +2018,11 @@
                      return;
                  }
              }
+<<<<<<< HEAD
 @@ -990,6 +2240,7 @@
+=======
+@@ -990,6 +2312,7 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
              for (j = 0; j < 4; ++j)
              {
                  boolean flag = true;
@@ -1844,7 +2030,11 @@
  
                  if (p_147343_1_.func_149589_f()[j].length() > 15)
                  {
+<<<<<<< HEAD
 @@ -1018,7 +2269,29 @@
+=======
+@@ -1018,7 +2341,29 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                  int k = p_147343_1_.func_149586_d();
                  i = p_147343_1_.func_149585_e();
                  TileEntitySign tileentitysign1 = (TileEntitySign)tileentity;
@@ -1875,7 +2065,11 @@
                  tileentitysign1.markDirty();
                  worldserver.markBlockForUpdate(j, k, i);
              }
+<<<<<<< HEAD
 @@ -1041,7 +2314,22 @@
+=======
+@@ -1041,7 +2386,22 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
      public void processPlayerAbilities(C13PacketPlayerAbilities p_147348_1_)
      {
@@ -1899,7 +2093,11 @@
      }
  
      public void processTabComplete(C14PacketTabComplete p_147341_1_)
+<<<<<<< HEAD
 @@ -1066,8 +2354,9 @@
+=======
+@@ -1066,8 +2426,9 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
      public void processVanilla250Packet(C17PacketCustomPayload p_147349_1_)
      {
          PacketBuffer packetbuffer;
@@ -1911,7 +2109,11 @@
  
          if ("MC|BEdit".equals(p_147349_1_.func_149559_c()))
          {
+<<<<<<< HEAD
 @@ -1075,34 +2364,48 @@
+=======
+@@ -1075,34 +2436,50 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
              try
              {
@@ -1937,11 +2139,21 @@
 +                if (stack != null)
                  {
 -                    if (itemstack.getItem() == Items.writable_book && itemstack.getItem() == itemstack1.getItem())
+<<<<<<< HEAD
 +                    if (push.getItem() == Items.writable_book && push.getItem() == stack.getItem())
                      {
 -                        itemstack1.setTagInfo("pages", itemstack.getTagCompound().getTagList("pages", 8));
 +                        ItemWritableBook.shadowUpdate(stack, push, false);
 +                        CraftEventFactory.handleEditBookEvent(playerEntity, stack); // CraftBukkit
+=======
++                    if (push.getItem() == Items.writable_book && push.getItem() == stack.getItem() && push.getEnchantmentTagList().equals(stack.getEnchantmentTagList()))
+                     {
+-                        itemstack1.setTagInfo("pages", itemstack.getTagCompound().getTagList("pages", 8));
++                        nouveau = stack.copy();
++                        ItemWritableBook.shadowUpdate(nouveau, push, false);
++                        CraftEventFactory.handleEditBookEvent(playerEntity, nouveau); // CraftBukkit
++                        this.playerEntity.inventory.setInventorySlotContents(this.playerEntity.inventory.currentItem, nouveau);
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                      }
 +                    else
 +                    {
@@ -1970,31 +2182,40 @@
              }
              finally
              {
+<<<<<<< HEAD
 @@ -1117,37 +2420,45 @@
+=======
+@@ -1117,37 +2494,47 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
  
              try
              {
 -                itemstack = packetbuffer.readItemStackFromBuffer();
 +                push = packetbuffer.readItemStackFromBuffer();
  
+<<<<<<< HEAD
 -                if (itemstack == null)
 +                if (push == null)
+=======
+-                if (itemstack != null)
++                if (push != null)
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                  {
-                     return;
-                 }
+-                    if (!ItemEditableBook.validBookTagContents(itemstack.getTagCompound()))
++                    if (!ItemEditableBook.validBookTagContents(push.getTagCompound()))
+                     {
+                         throw new IOException("Invalid book tag!");
+                     }
  
--                if (!ItemEditableBook.validBookTagContents(itemstack.getTagCompound()))
-+                if (!ItemEditableBook.validBookTagContents(push.getTagCompound()))
-                 {
-                     throw new IOException("Invalid book tag!");
-                 }
+-                    itemstack1 = this.playerEntity.inventory.getCurrentItem();
++                    stack = this.playerEntity.inventory.getCurrentItem();
  
--                itemstack1 = this.playerEntity.inventory.getCurrentItem();
-+                stack = this.playerEntity.inventory.getCurrentItem();
+-                    if (itemstack1 == null)
++                    if (stack == null)
+                     {
+                         return;
+                     }
  
--                if (itemstack1 != null)
-+                if (stack != null)
-                 {
 -                    if (itemstack.getItem() == Items.written_book && itemstack1.getItem() == Items.writable_book)
 +                    if (push.getItem() == Items.written_book && stack.getItem() == Items.writable_book)
                      {
@@ -2029,7 +2250,11 @@
              }
              finally
              {
+<<<<<<< HEAD
 @@ -1174,9 +2485,12 @@
+=======
+@@ -1174,9 +2561,12 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                          ((ContainerMerchant)container).setCurrentRecipeIndex(i);
                      }
                  }
@@ -2043,7 +2268,11 @@
                  }
              }
              else if ("MC|AdvCdm".equals(p_147349_1_.func_149559_c()))
+<<<<<<< HEAD
 @@ -1222,9 +2536,12 @@
+=======
+@@ -1222,9 +2612,12 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                              this.playerEntity.addChatMessage(new ChatComponentTranslation("advMode.setCommand.success", new Object[] {s1}));
                          }
                      }
@@ -2058,7 +2287,11 @@
                      }
                      finally
                      {
+<<<<<<< HEAD
 @@ -1257,9 +2574,12 @@
+=======
+@@ -1257,9 +2650,12 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                              tileentitybeacon.markDirty();
                          }
                      }
@@ -2073,7 +2306,11 @@
                      }
                  }
              }
+<<<<<<< HEAD
 @@ -1281,6 +2601,13 @@
+=======
+@@ -1281,6 +2677,13 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
                      containerrepair.updateItemName("");
                  }
              }
@@ -2087,7 +2324,11 @@
          }
      }
  
+<<<<<<< HEAD
 @@ -1292,6 +2619,21 @@
+=======
+@@ -1292,6 +2695,21 @@
+>>>>>>> parent of 50fc32f... Fix NetHandlerPlayServer patch
          }
      }
  
